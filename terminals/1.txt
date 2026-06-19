@@ -1,0 +1,43 @@
+---
+pid: 8648
+cwd: "C:\Users\Admin\Downloads\fabrio-hardware-platform(1)"
+command: "cd \"C:\\Users\\Admin\\Downloads\\fabrio-hardware-platform(1)\"; npm run build"
+started_at: 2026-06-11T07:03:21.567Z
+running_for_ms: 124990   
+---
+
+> my-project@0.1.0 build
+> next build
+
+▲ Next.js 16.2.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 73s
+  Running TypeScript ...
+
+<--- Last few GCs --->
+
+[8904:00000189F198F000]    28067 ms: Scavenge (interleaved) 192.3 (258.0) -> 162.9 (272.5) MB, pooled: 0 MB, 31.68 / 0.17 ms  (average mu = 0.988, current mu = 0.984) allocation failure; 
+[8904:00000189F198F000]    31128 ms: Scavenge (interleaved) 206.9 (273.1) -> 177.9 (293.6) MB, pooled: 0 MB, 77.44 / 0.12 ms  (average mu = 0.988, current mu = 0.984) allocation failure; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6118AAE1F node::OnFatalError+1343
+ 2: 00007FF6124F37B7 v8::Function::NewInstance+423
+ 3: 00007FF611E6E556 v8::SnapshotCreator::GetIsolate+56566
+ 4: 00007FF612E74710 v8::base::DiyFp::Multiply+40368
+ 5: 00007FF612C9D949 v8::internal::compiler::CompilationDependencies::FieldTypeDependencyOffTheRecord+107193
+ 6: 00007FF612ECAB64 v8::base::DiyFp::Multiply+393732
+ 7: 00007FF612EC7891 v8::base::DiyFp::Multiply+380721
+ 8: 00007FF612EC7348 v8::base::DiyFp::Multiply+379368
+ 9: 00007FF612477A76 X509_STORE_set_get_issuer+267766
+10: 00007FF612470698 X509_STORE_set_get_issuer+238104
+11: 00007FF612471B3A X509_STORE_set_get_issuer+243386
+12: 00007FF611EF4BF1 v8::String::Utf8Value::~Utf8Value+181681
+13: 00007FF611EF2D5F v8::String::Utf8Value::~Utf8Value+173855
+14: 00007FF61362067A v8::base::UnsignedDivisionByConstant<unsigned __int64>+1421850
+15: 00007FF61357853F v8::base::UnsignedDivisionByConstant<unsigned __int64>+733407
+16: 00000189903369DD 
+Next.js build worker exited with code: 134 and signal: null

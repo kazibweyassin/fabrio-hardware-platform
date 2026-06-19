@@ -1,0 +1,69 @@
+---
+pid: 4724
+cwd: "C:\Users\Admin\Downloads\fabrio-hardware-platform(1)"
+command: "cd \"C:\\Users\\Admin\\Downloads\\fabrio-hardware-platform(1)\"; npm run build 2>&1"
+started_at: 2026-06-16T14:00:20.864Z
+running_for_ms: 1474996  
+---
+
+> my-project@0.1.0 build
+> next build
+
+▲ Next.js 16.2.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 51s
+  Running TypeScript ...
+  Finished TypeScript in 45s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/26) ...
+  Generating static pages using 3 workers (6/26) 
+  Generating static pages using 3 workers (12/26) 
+  Generating static pages using 3 workers (19/26) 
+✓ Generating static pages using 3 workers (26/26) in 7.9s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /account
+├ ○ /admin
+├ ○ /admin/customers
+├ ○ /admin/orders
+├ ƒ /admin/orders/[id]
+├ ○ /admin/products
+├ ƒ /admin/products/[id]
+├ ○ /admin/products/new
+├ ○ /admin/quotations
+├ ƒ /api/auth/[...auth]
+├ ƒ /api/customers
+├ ƒ /api/inventory
+├ ƒ /api/orders
+├ ƒ /api/orders/[id]
+├ ƒ /api/orders/[id]/payment
+├ ƒ /api/orders/[id]/payment/mtn/request
+├ ƒ /api/orders/[id]/payment/mtn/status
+├ ƒ /api/products
+├ ƒ /api/products/[id]
+├ ƒ /api/quotations
+├ ƒ /api/quotations/request
+├ ƒ /api/upload
+├ ƒ /api/webhooks/mtn-momo
+├ ƒ /api/webhooks/stripe
+├ ƒ /api/wishlist
+├ ○ /auth/login
+├ ○ /auth/signup
+├ ○ /cart
+├ ○ /checkout
+├ ƒ /orders/[id]
+├ ƒ /products
+├ ƒ /products/[id]
+└ ○ /wishlist
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
