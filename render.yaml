@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: fabrio-hardware-platform
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: DATABASE_URL
+        sync: false
+      - key: NEON_AUTH_COOKIE_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
