@@ -1,11 +1,26 @@
 import { prisma } from '@/lib/db'
+import { guardAdminPage } from '@/lib/admin-guard'
 import Link from 'next/link'
-import { Plus, Eye } from 'lucide-react'
+import { Plus, Eye, FileText } from 'lucide-react'
 import { formatCurrency } from '@/lib/format'
+import { getQuotationStatusClass } from '@/lib/status-colors'
+import StatusBadge from '@/components/ui/status-badge'
+import AdminPageHeader from '@/components/admin/admin-page-header'
+import AdminEmptyState from '@/components/admin/admin-empty-state'
+import { Button } from '@/components/ui/button'
+import {
+  AdminTable,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableElement,
+  AdminTableHead,
+  AdminTableHeaderCell,
+  AdminTableRow,
+} from '@/components/admin/admin-table'
 
 async function getQuotations() {
   try {
-    const quotations = await prisma.quotation.findMany({
+    return await prisma.quotation.findMany({
       include: {
         customer: true,
         items: { include: { product: true } },
@@ -13,93 +28,79 @@ async function getQuotations() {
       orderBy: { createdAt: 'desc' },
       take: 50,
     })
-    return quotations
-  } catch (error) {
-    console.error('Error fetching quotations:', error)
+  } catch {
     return []
   }
 }
 
-function getStatusColor(status: string) {
-  switch (status) {
-    case 'draft':
-      return 'bg-gray-100 text-gray-800'
-    case 'sent':
-      return 'bg-blue-100 text-blue-800'
-    case 'accepted':
-      return 'bg-green-100 text-green-800'
-    case 'rejected':
-      return 'bg-red-100 text-red-800'
-    case 'expired':
-      return 'bg-yellow-100 text-yellow-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
-}
-
 export default async function AdminQuotationsPage() {
+  await guardAdminPage()
   const quotations = await getQuotations()
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold">Quotations</h2>
-        <Link
-          href="/admin/quotations/new"
-          className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-semibold hover:opacity-90 inline-flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          New Quotation
+    <div className="space-y-6">
+      <AdminPageHeader
+        eyebrow="B2B Sales"
+        title="Quotations"
+        description="Manage bulk quotes and enterprise pricing"
+      >
+        <Link href="/admin/quotations/new">
+          <Button className="gap-2 rounded-xl gradient-brand text-brand-foreground border-0 font-semibold">
+            <Plus className="w-4 h-4" />
+            New Quotation
+          </Button>
         </Link>
-      </div>
+      </AdminPageHeader>
 
       {quotations.length === 0 ? (
-        <div className="border border-border rounded-lg p-12 text-center">
-          <p className="text-muted-foreground">No quotations yet</p>
-        </div>
+        <AdminEmptyState
+          icon={FileText}
+          title="No quotations yet"
+          description="Create a quotation when a customer requests bulk pricing."
+          actionHref="/admin/quotations/new"
+          actionLabel="Create quotation"
+        />
       ) : (
-        <div className="border border-border rounded-lg overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-secondary/50 border-b border-border">
-              <tr>
-                <th className="text-left p-4 font-semibold">Quote #</th>
-                <th className="text-left p-4 font-semibold">Customer</th>
-                <th className="text-left p-4 font-semibold">Items</th>
-                <th className="text-left p-4 font-semibold">Total</th>
-                <th className="text-left p-4 font-semibold">Status</th>
-                <th className="text-left p-4 font-semibold">Valid Until</th>
-                <th className="text-right p-4 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <AdminTable>
+          <AdminTableElement>
+            <AdminTableHead>
+              <AdminTableHeaderCell>Quote #</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Customer</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Items</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Total</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Status</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Valid Until</AdminTableHeaderCell>
+              <AdminTableHeaderCell align="right">Actions</AdminTableHeaderCell>
+            </AdminTableHead>
+            <AdminTableBody>
               {quotations.map((quote) => (
-                <tr key={quote.id} className="border-b border-border hover:bg-accent/50 transition-colors">
-                  <td className="p-4 font-mono text-sm">{quote.quotationNumber}</td>
-                  <td className="p-4 font-medium">{quote.customer.businessName || 'N/A'}</td>
-                  <td className="p-4 text-sm text-muted-foreground">{quote.items.length} items</td>
-                  <td className="p-4 font-semibold">{formatCurrency(quote.total)}</td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(quote.status)}`}>
-                      {quote.status}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm text-muted-foreground">
+                <AdminTableRow key={quote.id}>
+                  <AdminTableCell className="font-mono">{quote.quotationNumber}</AdminTableCell>
+                  <AdminTableCell className="font-medium">
+                    {quote.customer.businessName || 'N/A'}
+                  </AdminTableCell>
+                  <AdminTableCell className="text-muted-foreground">{quote.items.length} items</AdminTableCell>
+                  <AdminTableCell className="font-semibold">{formatCurrency(quote.total)}</AdminTableCell>
+                  <AdminTableCell>
+                    <StatusBadge status={quote.status} variantClass={getQuotationStatusClass(quote.status)} />
+                  </AdminTableCell>
+                  <AdminTableCell className="text-muted-foreground">
                     {new Date(quote.validUntil).toLocaleDateString()}
-                  </td>
-                  <td className="p-4 text-right">
+                  </AdminTableCell>
+                  <AdminTableCell align="right">
                     <Link
                       href={`/admin/quotations/${quote.id}`}
-                      className="inline-flex items-center gap-1 text-primary hover:underline text-sm"
+                      className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
                     >
                       <Eye className="w-4 h-4" />
                       View
                     </Link>
-                  </td>
-                </tr>
+                  </AdminTableCell>
+                </AdminTableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </AdminTableBody>
+          </AdminTableElement>
+        </AdminTable>
       )}
     </div>
   )

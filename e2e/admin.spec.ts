@@ -12,7 +12,7 @@ test.describe('Admin panel', () => {
     await expect(page).toHaveURL(/\/products/, { timeout: 15_000 })
 
     await page.goto('/admin')
-    await expect(page.getByRole('heading', { name: /Dashboard Overview/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /^Dashboard$/i })).toBeVisible()
   })
 
   test('admin can open new product form', async ({ page }) => {

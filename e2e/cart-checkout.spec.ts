@@ -6,10 +6,10 @@ const CUSTOMER_PASSWORD = process.env.E2E_CUSTOMER_PASSWORD || 'customer'
 test.describe('E-commerce flow', () => {
   test('homepage loads and links to products', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: /Building Your Safety/i })).toBeVisible()
-    await page.getByRole('link', { name: /Shop Now/i }).click()
+    await expect(page.getByRole('heading', { name: /Building your safety/i })).toBeVisible()
+    await page.getByRole('link', { name: /Browse Catalog/i }).click()
     await expect(page).toHaveURL(/\/products/)
-    await expect(page.getByRole('heading', { name: /Industrial Products/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Industrial Catalog/i })).toBeVisible()
   })
 
   test('customer can login', async ({ page }) => {

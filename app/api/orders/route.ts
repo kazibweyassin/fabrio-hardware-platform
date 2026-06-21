@@ -3,6 +3,14 @@ import { requireAuth } from '@/lib/auth-helpers'
 import { calculateOrderTotals } from '@/lib/pricing'
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
 import { notifyOrderByEmail } from '@/lib/order-email'
+import { MAX_LINE_ITEM_QUANTITY } from '@/lib/constants'
+import { generateOrderNumber } from '@/lib/reference-numbers'
+
+const orderInclude = {
+  items: { include: { product: true } },
+  payment: true,
+  customer: { include: { user: true } },
+} as const
 
 export async function GET(req: Request) {
   const rateLimited = checkRateLimit(req, 'api:orders', RATE_LIMITS.api.limit, RATE_LIMITS.api.windowMs)
@@ -11,17 +19,26 @@ export async function GET(req: Request) {
   try {
     const session = await requireAuth(req.headers)
     const isAdmin = session.user.role === 'admin'
+    const url = new URL(req.url)
+    const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10))
+    const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '50', 10)))
+    const skip = (page - 1) * limit
 
     if (isAdmin) {
-      const orders = await prisma.order.findMany({
-        include: {
-          items: { include: { product: true } },
-          payment: true,
-          customer: { include: { user: true } },
-        },
-        orderBy: { createdAt: 'desc' },
+      const [orders, total] = await Promise.all([
+        prisma.order.findMany({
+          include: orderInclude,
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: limit,
+        }),
+        prisma.order.count(),
+      ])
+
+      return Response.json({
+        orders,
+        pagination: { total, page, limit, pages: Math.ceil(total / limit) || 1 },
       })
-      return Response.json({ orders })
     }
 
     const customer = await prisma.customer.findUnique({
@@ -29,19 +46,27 @@ export async function GET(req: Request) {
     })
 
     if (!customer) {
-      return Response.json({ orders: [] })
+      return Response.json({ orders: [], pagination: { total: 0, page: 1, limit, pages: 1 } })
     }
 
-    const orders = await prisma.order.findMany({
-      where: { customerId: customer.id },
-      include: {
-        items: { include: { product: true } },
-        payment: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where: { customerId: customer.id },
+        include: {
+          items: { include: { product: true } },
+          payment: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.order.count({ where: { customerId: customer.id } }),
+    ])
 
-    return Response.json({ orders })
+    return Response.json({
+      orders,
+      pagination: { total, page, limit, pages: Math.ceil(total / limit) || 1 },
+    })
   } catch (error) {
     if (error instanceof Response) return error
     console.error('Error fetching orders:', error)
@@ -84,8 +109,10 @@ export async function POST(req: Request) {
 
     const orderItems = items.map((item: { productId: string; quantity: number }) => {
       const product = productMap.get(item.productId)
-      if (!product || item.quantity < 1) {
-        throw new Error('Invalid cart item')
+      const quantity = Number(item.quantity)
+
+      if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > MAX_LINE_ITEM_QUANTITY) {
+        throw new Error('Invalid cart item quantity')
       }
 
       if (product.retailPrice <= 0) {
@@ -95,41 +122,43 @@ export async function POST(req: Request) {
       const unitPrice = product.retailPrice
       return {
         productId: product.id,
-        quantity: item.quantity,
+        quantity,
         unitPrice,
-        total: unitPrice * item.quantity,
+        total: unitPrice * quantity,
       }
     })
 
     const subtotal = orderItems.reduce((sum, item) => sum + item.total, 0)
     const totals = calculateOrderTotals(subtotal)
 
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: `ORD-${Date.now()}`,
-        customerId: customer.id,
-        userId: customer.userId,
-        status: 'pending',
-        subtotal: totals.subtotal,
-        tax: totals.tax,
-        shipping: totals.shipping,
-        total: totals.total,
-        shippingAddress: shippingAddress || null,
-        notes: notes || null,
-        items: {
-          create: orderItems,
+    const order = await prisma.$transaction(async (tx) => {
+      const created = await tx.order.create({
+        data: {
+          orderNumber: generateOrderNumber(),
+          customerId: customer.id,
+          userId: customer.userId,
+          status: 'pending',
+          subtotal: totals.subtotal,
+          tax: totals.tax,
+          shipping: totals.shipping,
+          total: totals.total,
+          shippingAddress: shippingAddress || null,
+          notes: notes || null,
+          items: { create: orderItems },
         },
-      },
-      include: { items: true },
-    })
+        include: { items: true },
+      })
 
-    await prisma.payment.create({
-      data: {
-        orderId: order.id,
-        method: 'mobile_money',
-        amount: totals.total,
-        status: 'pending',
-      },
+      await tx.payment.create({
+        data: {
+          orderId: created.id,
+          method: 'mobile_money',
+          amount: totals.total,
+          status: 'pending',
+        },
+      })
+
+      return created
     })
 
     notifyOrderByEmail(order.id, 'pending').catch(console.error)

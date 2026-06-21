@@ -2,9 +2,21 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Eye, Search } from 'lucide-react'
+import { Eye, Search, ShoppingCart } from 'lucide-react'
 import TableSkeleton from '@/components/skeletons/table-skeleton'
 import { formatCurrency } from '@/lib/format'
+import { getOrderStatusClass, getPaymentStatusClass } from '@/lib/status-colors'
+import StatusBadge from '@/components/ui/status-badge'
+import AdminEmptyState from '@/components/admin/admin-empty-state'
+import {
+  AdminTable,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableElement,
+  AdminTableHead,
+  AdminTableHeaderCell,
+  AdminTableRow,
+} from '@/components/admin/admin-table'
 
 interface Order {
   id: string
@@ -13,19 +25,8 @@ interface Order {
   status: string
   createdAt: string
   customer: { businessName?: string | null }
-  items: any[]
+  items: { id: string }[]
   payment?: { status: string } | null
-}
-
-function getStatusColor(status: string) {
-  switch (status) {
-    case 'pending': return 'bg-yellow-100 text-yellow-800'
-    case 'processing': return 'bg-blue-100 text-blue-800'
-    case 'shipped': return 'bg-purple-100 text-purple-800'
-    case 'delivered': return 'bg-green-100 text-green-800'
-    case 'cancelled': return 'bg-red-100 text-red-800'
-    default: return 'bg-gray-100 text-gray-800'
-  }
 }
 
 async function fetchOrders(): Promise<Order[]> {
@@ -33,7 +34,7 @@ async function fetchOrders(): Promise<Order[]> {
     const res = await fetch('/api/orders')
     if (!res.ok) return []
     const data = await res.json()
-    return data.orders || data || []
+    return data.orders || []
   } catch {
     return []
   }
@@ -62,17 +63,21 @@ export default function AdminOrdersPage() {
   })
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="text-3xl font-bold">Orders</h2>
-        <div className="flex gap-2">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p className="type-eyebrow mb-1">Fulfillment</p>
+          <h2 className="type-h2">Orders</h2>
+          <p className="text-sm text-muted-foreground mt-1">{orders.length} total orders</p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search orders or customers..."
-              className="pl-9 h-10 rounded-xl border border-border bg-surface text-sm w-64"
+              className="pl-9 h-10 rounded-xl border border-border bg-surface text-sm w-full sm:w-64"
             />
           </div>
           <select
@@ -93,64 +98,63 @@ export default function AdminOrdersPage() {
       {loading ? (
         <TableSkeleton rows={10} columns={8} />
       ) : filtered.length === 0 ? (
-        <div className="border border-border rounded-lg p-12 text-center">
-          <p className="text-muted-foreground">No orders found</p>
-        </div>
+        <AdminEmptyState
+          icon={ShoppingCart}
+          title="No orders found"
+          description={search || statusFilter ? 'Try adjusting your search or filters.' : 'Orders will appear here once customers checkout.'}
+        />
       ) : (
-        <div className="border border-border rounded-lg overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-secondary/50 border-b border-border">
-              <tr>
-                <th className="text-left p-4 font-semibold">Order #</th>
-                <th className="text-left p-4 font-semibold">Customer</th>
-                <th className="text-left p-4 font-semibold">Items</th>
-                <th className="text-left p-4 font-semibold">Total</th>
-                <th className="text-left p-4 font-semibold">Payment</th>
-                <th className="text-left p-4 font-semibold">Status</th>
-                <th className="text-left p-4 font-semibold">Date</th>
-                <th className="text-right p-4 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <AdminTable>
+          <AdminTableElement>
+            <AdminTableHead>
+              <AdminTableHeaderCell>Order #</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Customer</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Items</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Total</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Payment</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Status</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Date</AdminTableHeaderCell>
+              <AdminTableHeaderCell align="right">Actions</AdminTableHeaderCell>
+            </AdminTableHead>
+            <AdminTableBody>
               {filtered.map((order) => (
-                <tr key={order.id} className="border-b border-border hover:bg-accent/50 transition-colors">
-                  <td className="p-4 font-mono text-sm">{order.orderNumber}</td>
-                  <td className="p-4 font-medium">{order.customer?.businessName || 'N/A'}</td>
-                  <td className="p-4 text-sm text-muted-foreground">{order.items?.length || 0} items</td>
-                  <td className="p-4 font-semibold">{formatCurrency(Number(order.total))}</td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                      order.payment?.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
-                        : order.payment?.status === 'processing'
-                          ? 'bg-amber-100 text-amber-900'
-                          : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {order.payment?.status || 'pending'}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="p-4 text-sm text-muted-foreground">
+                <AdminTableRow key={order.id}>
+                  <AdminTableCell className="font-mono">{order.orderNumber}</AdminTableCell>
+                  <AdminTableCell className="font-medium">
+                    {order.customer?.businessName || 'N/A'}
+                  </AdminTableCell>
+                  <AdminTableCell className="text-muted-foreground">
+                    {order.items?.length || 0} items
+                  </AdminTableCell>
+                  <AdminTableCell className="font-semibold">
+                    {formatCurrency(Number(order.total))}
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <StatusBadge
+                      status={order.payment?.status || 'pending'}
+                      variantClass={getPaymentStatusClass(order.payment?.status || 'pending')}
+                    />
+                  </AdminTableCell>
+                  <AdminTableCell>
+                    <StatusBadge status={order.status} variantClass={getOrderStatusClass(order.status)} />
+                  </AdminTableCell>
+                  <AdminTableCell className="text-muted-foreground">
                     {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="p-4 text-right">
+                  </AdminTableCell>
+                  <AdminTableCell align="right">
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="inline-flex items-center gap-1 text-primary hover:underline text-sm"
+                      className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
                     >
                       <Eye className="w-4 h-4" />
                       View
                     </Link>
-                  </td>
-                </tr>
+                  </AdminTableCell>
+                </AdminTableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </AdminTableBody>
+          </AdminTableElement>
+        </AdminTable>
       )}
     </div>
   )

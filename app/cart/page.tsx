@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/format'
 import { calculateOrderTotals } from '@/lib/pricing'
 import { useEffect, useState } from 'react'
 import PageHeader from '@/components/layout/page-header'
+import CheckoutStepper from '@/components/checkout/checkout-stepper'
 import OrderSummaryCard from '@/components/layout/order-summary-card'
 import { Button } from '@/components/ui/button'
 
@@ -70,6 +71,8 @@ export default function CartPage() {
           title="Shopping Cart"
           description={`${items.length} item${items.length !== 1 ? 's' : ''} ready for checkout`}
         />
+
+        <CheckoutStepper currentStep={1} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">

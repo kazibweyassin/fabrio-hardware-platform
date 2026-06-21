@@ -10,7 +10,7 @@ datasource db {
   url        = env("DATABASE_URL")
   // Used by `prisma migrate` / `prisma db push` etc. when your DATABASE_URL points to a connection pooler
   // (e.g. Neon pooled URL). Get the "Direct connection" string from Neon dashboard and set DIRECT_DATABASE_URL.
-  directUrl  = env("DATABASE_URL")
+  directUrl  = env("DIRECT_DATABASE_URL")
 }
 
 // Better Auth tables

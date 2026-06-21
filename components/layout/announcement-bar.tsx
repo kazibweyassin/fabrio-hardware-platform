@@ -24,7 +24,7 @@ export default function AnnouncementBar() {
             </span>
             <span className="flex items-center gap-1.5">
               <Phone className="w-3.5 h-3.5" />
-              1-800-FABRIO
+              +256 700 123 456
             </span>
           </div>
         </div>

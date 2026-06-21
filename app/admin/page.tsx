@@ -1,7 +1,19 @@
 import { prisma } from '@/lib/db'
+import { guardAdminPage } from '@/lib/admin-guard'
 import Link from 'next/link'
 import { ArrowRight, BarChart3, DollarSign, Package, ShoppingCart } from 'lucide-react'
 import { formatCurrency } from '@/lib/format'
+import { getOrderStatusClass } from '@/lib/status-colors'
+import StatusBadge from '@/components/ui/status-badge'
+import {
+  AdminTable,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableElement,
+  AdminTableHead,
+  AdminTableHeaderCell,
+  AdminTableRow,
+} from '@/components/admin/admin-table'
 
 async function getDashboardStats() {
   try {
@@ -29,12 +41,28 @@ async function getDashboardStats() {
 const quickActions = [
   { href: '/admin/products', title: 'Manage Products', desc: 'View and edit catalog', color: 'bg-primary/5 text-primary' },
   { href: '/admin/orders', title: 'View Orders', desc: 'Process customer orders', color: 'bg-accent/10 text-accent-foreground' },
-  { href: '/admin/quotations', title: 'Quotations', desc: 'Manage B2B quotes', color: 'bg-emerald-50 text-emerald-700' },
-  { href: '/admin/customers', title: 'Customers', desc: 'Account management', color: 'bg-blue-50 text-blue-700' },
+  { href: '/admin/quotations', title: 'Quotations', desc: 'Manage B2B quotes', color: 'bg-success text-success-foreground' },
+  { href: '/admin/customers', title: 'Customers', desc: 'Account management', color: 'bg-info text-info-foreground' },
 ]
 
+async function getRecentOrders() {
+  try {
+    return await prisma.order.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        customer: true,
+        payment: true,
+      },
+    })
+  } catch {
+    return []
+  }
+}
+
 export default async function AdminDashboard() {
-  const stats = await getDashboardStats()
+  await guardAdminPage()
+  const [stats, recentOrders] = await Promise.all([getDashboardStats(), getRecentOrders()])
 
   const statCards = [
     { label: 'Total Products', value: stats.totalProducts.toLocaleString(), icon: Package },
@@ -77,7 +105,7 @@ export default async function AdminDashboard() {
             <Link
               key={action.href}
               href={action.href}
-              className="group p-5 rounded-2xl border border-border hover:border-primary/20 hover:shadow-md transition-all"
+              className="group card-interactive p-5 hover:border-primary/20"
             >
               <div className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${action.color} mb-4`}>
                 <ArrowRight className="w-4 h-4" />
@@ -87,6 +115,52 @@ export default async function AdminDashboard() {
             </Link>
           ))}
         </div>
+      </div>
+
+      <div className="card-elevated overflow-hidden">
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <div>
+            <h3 className="type-h3">Recent Orders</h3>
+            <p className="text-sm text-muted-foreground mt-1">Latest customer activity</p>
+          </div>
+          <Link href="/admin/orders" className="text-sm font-semibold text-primary hover:underline">
+            View all →
+          </Link>
+        </div>
+        {recentOrders.length === 0 ? (
+          <p className="p-6 text-sm text-muted-foreground">No orders yet</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <AdminTableElement>
+              <AdminTableHead>
+                <AdminTableHeaderCell>Order</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Customer</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Total</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Status</AdminTableHeaderCell>
+                <AdminTableHeaderCell>Date</AdminTableHeaderCell>
+              </AdminTableHead>
+              <AdminTableBody>
+                {recentOrders.map((order) => (
+                  <AdminTableRow key={order.id}>
+                    <AdminTableCell>
+                      <Link href={`/admin/orders/${order.id}`} className="font-mono text-primary hover:underline">
+                        {order.orderNumber}
+                      </Link>
+                    </AdminTableCell>
+                    <AdminTableCell>{order.customer?.businessName || '—'}</AdminTableCell>
+                    <AdminTableCell className="font-semibold">{formatCurrency(order.total)}</AdminTableCell>
+                    <AdminTableCell>
+                      <StatusBadge status={order.status} variantClass={getOrderStatusClass(order.status)} />
+                    </AdminTableCell>
+                    <AdminTableCell className="text-muted-foreground">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </AdminTableCell>
+                  </AdminTableRow>
+                ))}
+              </AdminTableBody>
+            </AdminTableElement>
+          </div>
+        )}
       </div>
     </div>
   )

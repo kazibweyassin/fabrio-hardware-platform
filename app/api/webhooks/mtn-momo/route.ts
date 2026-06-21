@@ -2,12 +2,21 @@ import { prisma } from '@/lib/db'
 import { mapMtnStatusToPaymentStatus } from '@/lib/mtn-momo'
 import { applyPaymentStatus } from '@/lib/payment-updates'
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
+import { getMtnMomoWebhookSecret } from '@/lib/env'
 
 export async function POST(req: Request) {
   const rateLimited = checkRateLimit(req, 'api:webhooks:mtn-momo', RATE_LIMITS.webhooks.limit, RATE_LIMITS.webhooks.windowMs)
   if (rateLimited) return rateLimited
 
   try {
+    const webhookSecret = getMtnMomoWebhookSecret()
+    if (webhookSecret) {
+      const providedSecret = req.headers.get('x-webhook-secret')
+      if (providedSecret !== webhookSecret) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+    }
+
     const referenceId = req.headers.get('x-reference-id')
     if (!referenceId) {
       return Response.json({ error: 'Missing X-Reference-Id header' }, { status: 400 })
@@ -26,6 +35,10 @@ export async function POST(req: Request) {
 
     if (!payment) {
       return Response.json({ error: 'Payment not found' }, { status: 404 })
+    }
+
+    if (payment.status === 'completed') {
+      return Response.json({ received: true, duplicate: true })
     }
 
     const mtnStatus = (body.status || 'PENDING') as 'PENDING' | 'SUCCESSFUL' | 'FAILED'

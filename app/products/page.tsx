@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/db'
 import ProductGrid from '@/components/products/product-grid'
 import CategorySidebar from '@/components/layout/category-sidebar'
 import PageHeader from '@/components/layout/page-header'
@@ -9,103 +8,11 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 import ProductCardSkeleton from '@/components/skeletons/product-card-skeleton'
+import FilterChips from '@/components/products/filter-chips'
+import { getCategoriesWithCounts, getProductsPaginated, type ProductSortOption } from '@/lib/products'
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants'
 
-const PAGE_SIZE = 20
-
-type SortOption = 'name-asc' | 'name-desc' | 'price-low' | 'price-high' | 'newest'
-
-async function getProducts(
-  categorySlug?: string,
-  search?: string,
-  sort: SortOption = 'name-asc',
-  minPrice?: number,
-  maxPrice?: number,
-  inStock?: boolean,
-  page: number = 1
-) {
-  try {
-    const where: any = {
-      active: true,
-    }
-
-    if (categorySlug) {
-      where.category = {
-        name: {
-          equals: categorySlug.replace(/-/g, ' '),
-          mode: 'insensitive',
-        },
-      }
-    }
-
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { sku: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-      ]
-    }
-
-    if (minPrice != null || maxPrice != null) {
-      where.retailPrice = {}
-      if (minPrice != null) where.retailPrice.gte = minPrice
-      if (maxPrice != null) where.retailPrice.lte = maxPrice
-    }
-
-    // Note: We don't have a stock field on Product in current schema.
-    // Using a simple active + price > 0 as "in stock" proxy for now.
-    if (inStock) {
-      where.retailPrice = { ...(where.retailPrice || {}), gt: 0 }
-    }
-
-    let orderBy: any = { name: 'asc' }
-    switch (sort) {
-      case 'name-desc':
-        orderBy = { name: 'desc' }
-        break
-      case 'price-low':
-        orderBy = { retailPrice: 'asc' }
-        break
-      case 'price-high':
-        orderBy = { retailPrice: 'desc' }
-        break
-      case 'newest':
-        orderBy = { createdAt: 'desc' }
-        break
-      default:
-        orderBy = { name: 'asc' }
-    }
-
-    const skip = (page - 1) * PAGE_SIZE
-
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: { category: true },
-        orderBy,
-        skip,
-        take: PAGE_SIZE,
-      }),
-      prisma.product.count({ where }),
-    ])
-
-    return { products, total }
-  } catch (error) {
-    console.error('Error fetching products:', error)
-    return { products: [], total: 0 }
-  }
-}
-
-async function getCategoriesWithCounts() {
-  try {
-    return await prisma.category.findMany({
-      include: { _count: { select: { products: true } } },
-      orderBy: { name: 'asc' },
-    })
-  } catch (error) {
-    console.error('Error fetching categories:', error)
-    return []
-  }
-}
+type SortOption = ProductSortOption
 
 interface SearchParams {
   category?: string
@@ -132,16 +39,23 @@ export default async function ProductsPage({
   const inStock = params.inStock === 'true'
   const page = Math.max(1, parseInt(params.page || '1', 10))
 
-  const [categories, { products, total }] = await Promise.all([
+  const [categories, { products, total, pages: totalPages }] = await Promise.all([
     getCategoriesWithCounts(),
-    getProducts(category, search, sort, minPrice, maxPrice, inStock, page),
+    getProductsPaginated({
+      categorySlug: category,
+      search,
+      sort,
+      minPrice,
+      maxPrice,
+      inStock,
+      page,
+      limit: DEFAULT_PAGE_SIZE,
+    }),
   ])
 
   const activeCategory = category
     ? categories.find((c) => c.name.toLowerCase().replace(/ /g, '-') === category)
     : null
-
-  const totalPages = Math.ceil(total / PAGE_SIZE) || 1
 
   const pageTitle = search
     ? `Results for "${search}"`
@@ -170,7 +84,16 @@ export default async function ProductsPage({
           </Badge>
         </PageHeader>
 
-        {/* Top Filters Bar */}
+        <FilterChips
+          search={search}
+          category={category}
+          categoryLabel={activeCategory?.name}
+          sort={sort}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          inStock={inStock}
+        />
+
         <div className="mb-6">
           <ProductFilters
             currentSort={sort}

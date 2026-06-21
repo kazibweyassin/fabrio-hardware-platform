@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { guardAdminPage } from '@/lib/admin-guard'
 import Link from 'next/link'
 import { Edit2, ImageOff, Plus } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -18,6 +19,7 @@ async function getProducts() {
 }
 
 export default async function AdminProductsPage() {
+  await guardAdminPage()
   const products = await getProducts()
   const needsPricing = products.filter((p) => p.retailPrice <= 0).length
   const needsImage = products.filter((p) => !p.image).length

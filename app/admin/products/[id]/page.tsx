@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { guardAdminPage } from '@/lib/admin-guard'
 import ProductForm from '@/components/admin/product-form'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -27,6 +28,7 @@ export default async function EditProductPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  await guardAdminPage()
   const { id } = await params
   const [product, categories] = await Promise.all([getProduct(id), getCategories()])
 

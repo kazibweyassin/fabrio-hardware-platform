@@ -16,6 +16,10 @@ export async function applyPaymentStatus(
 
   if (!order?.payment) return null
 
+  if (order.payment.status === status && status === 'completed') {
+    return order.payment
+  }
+
   const payment = await prisma.payment.update({
     where: { orderId: order.id },
     data: {

@@ -16,6 +16,7 @@ interface AddToCartButtonProps {
   className?: string
   showIcon?: boolean
   label?: string
+  disabled?: boolean
 }
 
 export default function AddToCartButton({
@@ -24,6 +25,7 @@ export default function AddToCartButton({
   className = '',
   showIcon = true,
   label = 'Add',
+  disabled = false,
 }: AddToCartButtonProps) {
   const addItem = useCart((state) => state.addItem)
 
@@ -44,6 +46,7 @@ export default function AddToCartButton({
     <button
       type="button"
       onClick={handleAdd}
+      disabled={disabled}
       className={cn(
         'inline-flex items-center justify-center gap-2',
         className

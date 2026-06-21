@@ -14,9 +14,10 @@ interface ProductDetailActionsProps {
     retailPrice: number
     image?: string | null
   }
+  disabled?: boolean
 }
 
-export default function ProductDetailActions({ product }: ProductDetailActionsProps) {
+export default function ProductDetailActions({ product, disabled = false }: ProductDetailActionsProps) {
   const [quantity, setQuantity] = useState(1)
   const { isWishlisted, toggle } = useWishlist()
 
@@ -57,8 +58,9 @@ export default function ProductDetailActions({ product }: ProductDetailActionsPr
         <AddToCartButton
           product={product}
           quantity={quantity}
-          label="Add to Cart"
-          className="flex-1 h-12 rounded-xl gradient-brand text-brand-foreground text-base font-semibold hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-2"
+          label={disabled ? 'Out of Stock' : 'Add to Cart'}
+          disabled={disabled}
+          className="flex-1 h-12 rounded-xl gradient-brand text-brand-foreground text-base font-semibold hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         />
 
         <WishlistButton

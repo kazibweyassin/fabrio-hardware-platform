@@ -83,7 +83,7 @@ export default async function HomePage() {
             <Link
               key={cat.id}
               href={`/products?category=${cat.name.toLowerCase().replace(/ /g, '-')}`}
-              className="group card-elevated p-5 text-center hover:-translate-y-1 transition-all duration-300"
+              className="group card-interactive p-5 text-center hover:-translate-y-1"
             >
               <CategoryIcon name={cat.name} />
               <p className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2">
@@ -118,6 +118,7 @@ export default async function HomePage() {
                 <HomeProductCard
                   key={product.id}
                   product={product}
+                  variant="home"
                   showDiscount
                   discountPercent={product.discountPercent}
                 />
@@ -148,7 +149,7 @@ export default async function HomePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredProducts.map((product) => (
-              <HomeProductCard key={product.id} product={product} />
+              <HomeProductCard key={product.id} product={product} variant="home" />
             ))}
           </div>
         )}

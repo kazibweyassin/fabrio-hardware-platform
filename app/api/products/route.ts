@@ -1,7 +1,10 @@
-import { prisma } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth-helpers'
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
+import { getProductsPaginated, type ProductSortOption } from '@/lib/products'
 import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
+
+const VALID_SORTS: ProductSortOption[] = ['name-asc', 'name-desc', 'price-low', 'price-high', 'newest']
 
 export async function GET(request: NextRequest) {
   const rateLimited = checkRateLimit(request, 'api:products', RATE_LIMITS.api.limit, RATE_LIMITS.api.windowMs)
@@ -9,48 +12,24 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url)
-    const category = searchParams.get('category')
-    const search = searchParams.get('search')
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)))
-    const skip = (page - 1) * limit
+    const sortParam = searchParams.get('sort') as ProductSortOption | null
+    const sort = sortParam && VALID_SORTS.includes(sortParam) ? sortParam : 'newest'
 
-    const where = {
-      active: true,
-      ...(category && {
-        category: {
-          name: { contains: category, mode: 'insensitive' as const },
-        },
-      }),
-      ...(search && {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' as const } },
-          { sku: { contains: search, mode: 'insensitive' as const } },
-          { catalogId: { contains: search, mode: 'insensitive' as const } },
-          { subcategory: { contains: search, mode: 'insensitive' as const } },
-          { description: { contains: search, mode: 'insensitive' as const } },
-        ],
-      }),
-    }
-
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        skip,
-        take: limit,
-        include: { category: true },
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.product.count({ where }),
-    ])
+    const result = await getProductsPaginated({
+      categorySlug: searchParams.get('category') || undefined,
+      search: searchParams.get('search') || undefined,
+      sort,
+      page: Math.max(1, parseInt(searchParams.get('page') || '1', 10)),
+      limit: Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10))),
+    })
 
     return NextResponse.json({
-      products,
+      products: result.products,
       pagination: {
-        total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit),
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        pages: result.pages,
       },
     })
   } catch (error) {

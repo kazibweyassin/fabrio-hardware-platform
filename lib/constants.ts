@@ -1,6 +1,8 @@
 export const TAX_RATE = 0.08
 export const SHIPPING_FEE = 200_000 // UGX
 export const FREE_SHIPPING_THRESHOLD = 2_000_000 // UGX
+export const MAX_LINE_ITEM_QUANTITY = 999
+export const DEFAULT_PAGE_SIZE = 20
 export const CURRENCY = 'UGX'
 export const CURRENCY_LOCALE = 'en-UG'
 

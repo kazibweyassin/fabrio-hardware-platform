@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
 import { auth } from '@/lib/auth'
+import { requireAdmin } from '@/lib/auth-helpers'
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
 
 export async function GET(req: Request) {
@@ -7,6 +8,17 @@ export async function GET(req: Request) {
   if (rateLimited) return rateLimited
 
   try {
+    const url = new URL(req.url)
+    if (url.searchParams.get('admin') === '1') {
+      await requireAdmin(req.headers)
+      const customers = await prisma.customer.findMany({
+        include: { user: true },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+      })
+      return Response.json({ customers })
+    }
+
     const session = await auth.api.getSession({ headers: req.headers })
 
     if (!session?.user) {
@@ -62,10 +74,29 @@ export async function PUT(req: Request) {
 
     const body = await req.json()
 
-    const updatedCustomer = await prisma.customer.update({
+    const profileData = {
+      businessName: body.businessName,
+      phone: body.phone,
+      taxId: body.taxId,
+      billingAddress: body.billingAddress,
+      billingCity: body.billingCity,
+      billingState: body.billingState,
+      billingZip: body.billingZip,
+      billingCountry: body.billingCountry,
+      shippingAddress: body.shippingAddress,
+      shippingCity: body.shippingCity,
+      shippingState: body.shippingState,
+      shippingZip: body.shippingZip,
+      shippingCountry: body.shippingCountry,
+    }
+
+    const updatedCustomer = await prisma.customer.upsert({
       where: { userId: session.user.id },
-      data: {
-        businessName: body.businessName,
+      update: profileData,
+      create: {
+        userId: session.user.id,
+        creditLimit: 50000,
+        businessName: body.businessName || session.user.name || undefined,
         phone: body.phone,
         taxId: body.taxId,
         billingAddress: body.billingAddress,

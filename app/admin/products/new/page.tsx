@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { guardAdminPage } from '@/lib/admin-guard'
 import ProductForm from '@/components/admin/product-form'
 import Link from 'next/link'
 
@@ -11,6 +12,7 @@ async function getCategories() {
 }
 
 export default async function NewProductPage() {
+  await guardAdminPage()
   const categories = await getCategories()
 
   return (

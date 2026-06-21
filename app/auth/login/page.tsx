@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Lock, Mail } from 'lucide-react'
 import AuthPanel from '@/components/layout/auth-panel'
+import AuthMobileHeader from '@/components/layout/auth-mobile-header'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -52,6 +53,7 @@ export default function LoginPage() {
 
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
         <div className="w-full max-w-md animate-slide-up">
+          <AuthMobileHeader />
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
             <p className="text-muted-foreground mt-2">Sign in to your Fabrio B2B account</p>
@@ -100,11 +102,13 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          <div className="mt-8 p-4 rounded-xl bg-surface border border-border text-sm">
-            <p className="font-semibold text-foreground mb-2">Demo credentials</p>
-            <p className="text-muted-foreground">Email: john@company.com</p>
-            <p className="text-muted-foreground">Password: customer</p>
-          </div>
+          {process.env.NODE_ENV === 'development' && (
+            <details className="mt-8 p-4 rounded-xl bg-surface border border-border text-sm">
+              <summary className="font-semibold text-foreground cursor-pointer">Demo credentials</summary>
+              <p className="text-muted-foreground mt-2">Email: john@company.com</p>
+              <p className="text-muted-foreground">Password: customer</p>
+            </details>
+          )}
         </div>
       </div>
     </div>

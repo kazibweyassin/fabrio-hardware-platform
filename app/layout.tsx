@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import SiteChrome from '@/components/layout/site-chrome'
+import ThemeInit from '@/components/layout/theme-init'
 
 const jakarta = Plus_Jakarta_Sans({
   variable: '--font-jakarta',
@@ -32,8 +33,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground">
+        <ThemeInit />
         <SiteChrome>
           <main className="min-h-screen">{children}</main>
         </SiteChrome>

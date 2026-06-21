@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { signOut } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
+import ThemeToggle from '@/components/admin/theme-toggle'
 
 const menuItems = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -145,8 +146,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wider">
-            Admin
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wider">
+              Admin
+            </div>
           </div>
         </header>
 

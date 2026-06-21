@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, MapPin, Phone } from 'lucide-react'
+import NewsletterForm from '@/components/layout/newsletter-form'
 
 const productLinks = [
   { href: '/products?category=safety-&-ppe', label: 'Safety & PPE' },
@@ -39,7 +40,7 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-brand shrink-0" />
-                1-800-FABRIO
+                +256 700 123 456
               </p>
               <p className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-brand shrink-0" />
@@ -79,33 +80,7 @@ export default function Footer() {
             <p className="text-sm text-white/60 mb-4 leading-relaxed">
               Get bulk pricing alerts, new product launches, and industry safety updates.
             </p>
-            <form
-              className="flex gap-2"
-              onSubmit={(e) => {
-                e.preventDefault()
-                const form = e.currentTarget
-                const email = (form.elements.namedItem('email') as HTMLInputElement)?.value
-                if (email) {
-                  // Simple functional stub
-                  alert(`Thank you! We'll send updates to ${email}`)
-                  form.reset()
-                }
-              }}
-            >
-              <input
-                name="email"
-                type="email"
-                placeholder="Work email"
-                required
-                className="flex-1 h-11 px-4 rounded-xl bg-white/10 border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-brand/50"
-              />
-              <button
-                type="submit"
-                className="h-11 px-5 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold shrink-0 hover:opacity-90 transition-opacity"
-              >
-                Subscribe
-              </button>
-            </form>
+            <NewsletterForm />
           </div>
         </div>
 

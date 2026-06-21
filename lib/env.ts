@@ -34,6 +34,10 @@ export function isMtnMomoApiEnabled(): boolean {
   return process.env.NEXT_PUBLIC_MTN_MOMO_API_ENABLED === 'true' && isMtnMomoConfigured()
 }
 
+export function getMtnMomoWebhookSecret(): string | undefined {
+  return process.env.MTN_MOMO_WEBHOOK_SECRET
+}
+
 export function getMtnMomoConfig() {
   const environment = (process.env.MTN_MOMO_ENVIRONMENT || 'sandbox') as MtnMomoEnvironment
   return {

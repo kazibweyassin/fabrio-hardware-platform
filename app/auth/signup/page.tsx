@@ -7,6 +7,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { Lock, Mail, User } from 'lucide-react'
 import AuthPanel from '@/components/layout/auth-panel'
+import AuthMobileHeader from '@/components/layout/auth-mobile-header'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -66,6 +67,7 @@ export default function SignUpPage() {
 
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
         <div className="w-full max-w-md animate-slide-up">
+          <AuthMobileHeader />
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Create your account</h1>
             <p className="text-muted-foreground mt-2">Join Fabrio for bulk pricing and B2B features</p>

@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import MobileMoneyPaymentForm from '@/components/checkout/mobile-money-payment-form'
 import { calculateOrderTotals } from '@/lib/pricing'
 import PageHeader from '@/components/layout/page-header'
+import CheckoutStepper from '@/components/checkout/checkout-stepper'
 import OrderSummaryCard from '@/components/layout/order-summary-card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -128,6 +129,8 @@ export default function CheckoutPage() {
           description="Pay securely with MTN or Airtel Mobile Money"
         />
 
+        <CheckoutStepper currentStep={orderId ? 3 : 2} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             {!orderId ? (
@@ -211,9 +214,9 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              Payments are verified manually before your order is processed
+            <div className="flex items-center gap-2 text-xs text-muted-foreground p-4 rounded-xl bg-success/50 border border-success/30">
+              <ShieldCheck className="w-4 h-4 text-success-foreground shrink-0" />
+              Payments are verified before your order is processed. Use your order number as the payment reference.
             </div>
           </div>
 
