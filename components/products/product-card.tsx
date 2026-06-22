@@ -42,50 +42,86 @@ export default function ProductCard({
     discountPercent ??
     (hasDiscount ? Math.round(((product.retailPrice - product.basePrice) / product.retailPrice) * 100) : 0)
 
+  const isCatalog = variant === 'catalog'
+
   return (
-    <article className={cn('group card-interactive overflow-hidden hover:-translate-y-1', className)}>
+    <article
+      className={cn(
+        'group card-interactive overflow-hidden hover:-translate-y-0.5',
+        isCatalog && 'text-sm',
+        className
+      )}
+    >
       <div className="relative">
         <Link href={`/products/${product.id}`} className="block">
-          <ProductImage src={product.image} alt={product.name} />
+          <ProductImage
+            src={product.image}
+            alt={product.name}
+            aspectClass={isCatalog ? 'aspect-square' : 'aspect-[4/3]'}
+            sizes={
+              isCatalog
+                ? '(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 25vw'
+                : '(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw'
+            }
+          />
         </Link>
         {(showDiscount || computedDiscount > 0) && computedDiscount > 0 && (
-          <Badge variant="accent" className="absolute top-3 left-3 shadow-sm z-10 pointer-events-none">
+          <Badge
+            variant="accent"
+            className={cn(
+              'absolute shadow-sm z-10 pointer-events-none',
+              isCatalog ? 'top-2 left-2 text-[10px] px-1.5 py-0' : 'top-3 left-3'
+            )}
+          >
             -{computedDiscount}%
           </Badge>
         )}
-        <div className="absolute top-3 right-3 z-10">
+        <div className={cn('absolute z-10', isCatalog ? 'top-2 right-2' : 'top-3 right-3')}>
           <WishlistButton
             productId={product.id}
             productName={product.name}
             isWishlisted={isWishlisted(product.id)}
             onToggle={toggle}
+            size={isCatalog ? 'sm' : 'md'}
           />
         </div>
       </div>
 
-      <div className="p-4 sm:p-5">
+      <div className={cn(isCatalog ? 'p-3' : 'p-4 sm:p-5')}>
         {product.category && (
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+          <p
+            className={cn(
+              'font-semibold uppercase tracking-wider text-muted-foreground',
+              isCatalog ? 'text-[10px] mb-1 line-clamp-1' : 'text-[11px] mb-2'
+            )}
+          >
             {product.category.name}
           </p>
         )}
         <Link href={`/products/${product.id}`}>
-          <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+          <h3
+            className={cn(
+              'font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug',
+              isCatalog ? 'text-sm' : 'text-base'
+            )}
+          >
             {product.name}
           </h3>
         </Link>
-        {variant === 'catalog' && product.sku && (
-          <p className="text-xs text-muted-foreground mt-1.5 font-mono">SKU: {product.sku}</p>
+        {isCatalog && product.sku && (
+          <p className="text-[10px] text-muted-foreground mt-1 font-mono truncate">SKU: {product.sku}</p>
         )}
 
-        <div className="flex items-baseline gap-2 mt-3 mb-4">
+        <div className={cn('flex items-baseline gap-1.5 flex-wrap', isCatalog ? 'mt-2 mb-2.5' : 'mt-3 mb-4')}>
           {product.retailPrice > 0 ? (
-            <span className="text-xl font-bold text-foreground">{formatCurrency(product.retailPrice)}</span>
+            <span className={cn('font-bold text-foreground', isCatalog ? 'text-base' : 'text-xl')}>
+              {formatCurrency(product.retailPrice)}
+            </span>
           ) : (
-            <span className="text-sm font-semibold text-muted-foreground">Price on request</span>
+            <span className="text-xs font-semibold text-muted-foreground">Price on request</span>
           )}
           {(showDiscount || hasDiscount) && product.basePrice < product.retailPrice && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className={cn('text-muted-foreground line-through', isCatalog ? 'text-xs' : 'text-sm')}>
               {formatCurrency(product.basePrice)}
             </span>
           )}
@@ -99,15 +135,16 @@ export default function ProductCard({
             className="w-full h-10 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm"
           />
         ) : (
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Link href={`/products/${product.id}`} className="flex-1 min-w-0">
-              <Button variant="outline" className="w-full h-10 rounded-xl font-medium">
+          <div className="flex flex-col gap-1.5">
+            <Link href={`/products/${product.id}`} className="min-w-0">
+              <Button variant="outline" className="w-full h-8 rounded-lg text-xs font-medium">
                 Details
               </Button>
             </Link>
             <AddToCartButton
               product={product}
-              className="flex-1 w-full h-10 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm min-w-0"
+              label="Add"
+              className="w-full h-8 rounded-lg gradient-brand text-brand-foreground text-xs font-semibold hover:opacity-90 transition-opacity shadow-sm min-w-0"
             />
           </div>
         )}

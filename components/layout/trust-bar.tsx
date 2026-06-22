@@ -2,26 +2,19 @@ import Image from 'next/image'
 import { Handshake } from 'lucide-react'
 import { getPartnerBrands } from '@/lib/partner-brands'
 
-function BrandBadge({ name, logo }: { name: string; logo?: string }) {
-  if (logo) {
-    return (
-      <div className="flex h-14 min-w-[9rem] items-center justify-center rounded-xl border border-border/60 bg-card px-6 shadow-sm">
-        <Image
-          src={logo}
-          alt={name}
-          width={140}
-          height={48}
-          className="h-9 w-auto max-w-[8.5rem] object-contain opacity-90"
-        />
-      </div>
-    )
-  }
-
+function BrandBadge({ name, logo }: { name: string; logo: string }) {
   return (
-    <div className="flex h-14 min-w-[9rem] items-center justify-center rounded-xl border border-border/60 bg-card px-6 shadow-sm">
-      <span className="text-sm font-bold tracking-wide text-foreground/80 whitespace-nowrap">
-        {name}
-      </span>
+    <div
+      className="flex h-14 min-w-[9.5rem] shrink-0 items-center justify-center rounded-xl border border-border/60 bg-card px-5 shadow-sm"
+      title={name}
+    >
+      <Image
+        src={logo}
+        alt={`${name} logo`}
+        width={140}
+        height={48}
+        className="h-9 w-auto max-w-[8.5rem] object-contain opacity-90 grayscale-[15%] transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+      />
     </div>
   )
 }

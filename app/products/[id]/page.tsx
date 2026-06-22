@@ -10,16 +10,48 @@ import ProductImage from '@/components/products/product-image'
 import { formatCurrency } from '@/lib/format'
 import { Badge } from '@/components/ui/badge'
 import { getStockLabel, getStockStatus, getStockStatusClass } from '@/lib/stock'
+import JsonLd from '@/components/seo/json-ld'
+import {
+  buildBreadcrumbJsonLd,
+  buildPageMetadata,
+  buildProductJsonLd,
+  categoryNameToSlug,
+  truncateDescription,
+} from '@/lib/seo'
+import type { Metadata } from 'next'
 
 interface ProductPageProps {
   params: Promise<{ id: string }>
 }
 
-export async function generateMetadata({ params }: ProductPageProps) {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id } = await params
-  const product = await prisma.product.findUnique({ where: { id } })
-  if (!product) return { title: 'Product Not Found' }
-  return { title: product.name, description: product.description }
+  const product = await prisma.product.findUnique({
+    where: { id },
+    include: { category: true },
+  })
+
+  if (!product || !product.active) {
+    return { title: 'Product Not Found', robots: { index: false, follow: false } }
+  }
+
+  const description =
+    product.description ||
+    `Buy ${product.name} (SKU: ${product.sku}) from Fabrio Hardware. Industrial-grade supply with nationwide delivery in Uganda.`
+
+  return buildPageMetadata({
+    title: product.name,
+    description: truncateDescription(description),
+    path: `/products/${product.id}`,
+    image: product.image,
+    type: 'product',
+    keywords: [
+      product.name,
+      product.sku,
+      product.category?.name || 'industrial hardware',
+      'buy hardware Uganda',
+    ],
+  })
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -100,8 +132,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <p className="text-sm text-muted-foreground">Contact us for volume pricing on large orders.</p>
   )
 
+  const breadcrumbItems = [
+    { name: 'Home', path: '/' },
+    { name: 'Products', path: '/products' },
+    ...(product.category
+      ? [
+          {
+            name: product.category.name,
+            path: `/products?category=${categoryNameToSlug(product.category.name)}`,
+          },
+        ]
+      : []),
+    { name: product.name, path: `/products/${product.id}` },
+  ]
+
+  const structuredData = [
+    buildBreadcrumbJsonLd(breadcrumbItems),
+    buildProductJsonLd({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      sku: product.sku,
+      image: product.image,
+      retailPrice: product.retailPrice,
+      categoryName: product.category?.name,
+      inStock: stockStatus !== 'out_of_stock',
+    }),
+  ]
+
   return (
     <div className="bg-background min-h-screen">
+      <JsonLd data={structuredData} />
       <div className="border-b border-border bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center gap-1.5 text-sm text-muted-foreground overflow-x-auto scrollbar-none whitespace-nowrap pb-0.5">
@@ -112,7 +173,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <>
                 <ChevronRight className="w-3.5 h-3.5" />
                 <Link
-                  href={`/products?category=${product.category.name.toLowerCase().replace(/ /g, '-')}`}
+                  href={`/products?category=${categoryNameToSlug(product.category.name)}`}
                   className="hover:text-foreground transition-colors"
                 >
                   {product.category.name}

@@ -20,6 +20,7 @@
     "test:e2e:ui": "playwright test --ui",
     "brands:fetch-logos": "node scripts/fetch-brand-logos.mjs",
     "products:fetch-images": "node scripts/fetch-product-images.mjs",
+    "products:missing-images": "node scripts/list-missing-images.js",
     "db:seed-prices": "node scripts/seed-product-prices.js"
   },
   "dependencies": {

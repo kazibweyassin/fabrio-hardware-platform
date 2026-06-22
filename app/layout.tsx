@@ -6,6 +6,13 @@ import { Toaster } from 'react-hot-toast'
 import SiteChrome from '@/components/layout/site-chrome'
 import ThemeInit from '@/components/layout/theme-init'
 import { getAppUrl } from '@/lib/env'
+import {
+  buildPageMetadata,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  SITE_NAME,
+  SITE_TAGLINE,
+} from '@/lib/seo'
 
 const jakarta = Plus_Jakarta_Sans({
   variable: '--font-jakarta',
@@ -20,28 +27,22 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getAppUrl()),
+  ...buildPageMetadata({
+    title: SITE_TAGLINE,
+    description: DEFAULT_DESCRIPTION,
+    path: '/',
+    keywords: DEFAULT_KEYWORDS,
+  }),
   title: {
-    default: 'Fabrio Hardware — Industrial Safety & Equipment',
-    template: '%s | Fabrio Hardware',
-  },
-  description:
-    'Premium construction hardware and certified PPE. OSHA-compliant safety gear trusted by manufacturing and enterprise operations worldwide.',
-  openGraph: {
-    type: 'website',
-    locale: 'en_UG',
-    siteName: 'Fabrio Hardware',
-    title: 'Fabrio Hardware — Industrial Safety & Equipment',
-    description:
-      'Premium construction hardware and certified PPE for enterprises and contractors in Uganda.',
-  },
-  robots: {
-    index: true,
-    follow: true,
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
   icons: {
     icon: '/fabrio-logo.png',
     apple: '/fabrio-logo.png',
   },
+  manifest: '/manifest.webmanifest',
+  category: 'shopping',
 }
 
 export default function RootLayout({

@@ -1,5 +1,13 @@
 import Link from 'next/link'
 import { ArrowRight, ChevronRight, Sparkles, Timer, Zap } from 'lucide-react'
+import JsonLd from '@/components/seo/json-ld'
+import {
+  buildItemListJsonLd,
+  buildOrganizationJsonLd,
+  buildPageMetadata,
+  buildWebSiteJsonLd,
+  SITE_TAGLINE,
+} from '@/lib/seo'
 import CategoryIcon from '@/components/home/category-icon'
 import HomeProductCard from '@/components/home/product-card'
 import HeroImageSlider from '@/components/home/hero-image-slider'
@@ -7,6 +15,14 @@ import TrustBar from '@/components/layout/trust-bar'
 import { Button } from '@/components/ui/button'
 import { getHeroImages } from '@/lib/hero-images'
 import { getCategoriesWithCounts, getFeaturedProducts, getFlashSaleProducts } from '@/lib/products'
+
+export const metadata = buildPageMetadata({
+  title: SITE_TAGLINE,
+  description:
+    'Shop industrial hardware, OSHA-certified PPE, power tools, and safety equipment in Uganda. Bulk pricing and B2B fulfillment from Fabrio Hardware.',
+  path: '/',
+  keywords: ['hardware store Uganda', 'industrial supply Kampala', 'PPE wholesale'],
+})
 
 export default async function HomePage() {
   const [categories, featuredProducts, flashSaleProducts] = await Promise.all([
@@ -16,8 +32,18 @@ export default async function HomePage() {
   ])
   const heroImages = getHeroImages()
 
+  const structuredData = [
+    buildOrganizationJsonLd(),
+    buildWebSiteJsonLd(),
+    buildItemListJsonLd(
+      featuredProducts.map((p) => ({ id: p.id, name: p.name })),
+      'Featured Products'
+    ),
+  ]
+
   return (
     <div className="bg-background">
+      <JsonLd data={structuredData} />
       {/* Hero */}
       <section className="relative overflow-hidden min-h-[520px] sm:min-h-[min(42vw,720px)] lg:min-h-[min(38vw,760px)]">
         <HeroImageSlider images={heroImages} />
@@ -147,7 +173,7 @@ export default async function HomePage() {
         {featuredProducts.length === 0 ? (
           <p className="text-muted-foreground text-center py-12">No products available yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {featuredProducts.map((product) => (
               <HomeProductCard key={product.id} product={product} variant="home" />
             ))}

@@ -12,6 +12,14 @@ import ProductCardSkeleton from '@/components/skeletons/product-card-skeleton'
 import FilterChips from '@/components/products/filter-chips'
 import { getCategoriesWithCounts, getProductsPaginated, type ProductSortOption } from '@/lib/products'
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants'
+import JsonLd from '@/components/seo/json-ld'
+import {
+  buildItemListJsonLd,
+  buildPageMetadata,
+  buildProductsCanonicalPath,
+  truncateDescription,
+} from '@/lib/seo'
+import type { Metadata } from 'next'
 
 type SortOption = ProductSortOption
 
@@ -23,6 +31,48 @@ interface SearchParams {
   maxPrice?: string
   inStock?: string
   page?: string
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const category = params.category
+  const search = params.search
+  const page = params.page
+
+  let activeCategory: { name: string } | null = null
+  if (category) {
+    const categories = await getCategoriesWithCounts()
+    activeCategory =
+      categories.find((c) => c.name.toLowerCase().replace(/ /g, '-') === category) ?? null
+  }
+
+  const title = search
+    ? `Search: ${search}`
+    : activeCategory
+      ? activeCategory.name
+      : 'Industrial Catalog'
+
+  const description = search
+    ? `Browse products matching "${search}" in the Fabrio Hardware industrial catalog.`
+    : activeCategory
+      ? `Shop ${activeCategory.name.toLowerCase()} from Fabrio Hardware — certified inventory, bulk pricing, and fast delivery across Uganda.`
+      : 'Browse Fabrio Hardware\'s full catalog of industrial tools, PPE, power equipment, and safety gear for B2B buyers in Uganda.'
+
+  const noIndex = Boolean(
+    search || params.minPrice || params.maxPrice || params.inStock === 'true'
+  )
+
+  return buildPageMetadata({
+    title,
+    description: truncateDescription(description),
+    path: buildProductsCanonicalPath({ category, search, page }),
+    keywords: activeCategory ? [activeCategory.name, `${activeCategory.name} Uganda`] : ['product catalog', 'industrial supplies'],
+    noIndex,
+  })
 }
 
 export default async function ProductsPage({
@@ -72,8 +122,16 @@ export default async function ProductsPage({
 
   const hasFilters = !!(search || category || sort !== 'name-asc' || minPrice || maxPrice || inStock)
 
+  const listJsonLd = products.length
+    ? buildItemListJsonLd(
+        products.map((p) => ({ id: p.id, name: p.name })),
+        pageTitle
+      )
+    : null
+
   return (
     <div className="min-h-screen bg-background">
+      {listJsonLd && <JsonLd data={listJsonLd} />}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
         <PageHeader
           eyebrow="Product Catalog"
@@ -144,7 +202,7 @@ export default async function ProductsPage({
               <>
                 <Suspense
                   fallback={
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                       {Array.from({ length: 9 }).map((_, i) => (
                         <ProductCardSkeleton key={i} />
                       ))}
