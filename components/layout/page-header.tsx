@@ -18,7 +18,7 @@ export default function PageHeader({
   dark = false,
 }: PageHeaderProps) {
   return (
-    <div className={cn('mb-10', className)}>
+    <div className={cn('mb-6 sm:mb-8 lg:mb-10', className)}>
       {eyebrow && (
         <p
           className={cn(
@@ -33,7 +33,7 @@ export default function PageHeader({
         <div className="max-w-2xl">
           <h1
             className={cn(
-              'text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight',
+              'text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight',
               dark ? 'text-white' : 'text-foreground'
             )}
           >

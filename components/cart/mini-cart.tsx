@@ -50,8 +50,8 @@ export default function MiniCart() {
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-14 z-50 w-80 card-elevated border shadow-xl">
+          <div className="fixed inset-0 z-40 bg-black/40 sm:bg-transparent" onClick={() => setIsOpen(false)} />
+          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[min(85vh,520px)] w-full rounded-t-3xl border-t border-border bg-card shadow-2xl safe-bottom sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-14 sm:w-80 sm:max-h-none sm:rounded-2xl sm:border card-elevated">
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="font-semibold">Your Cart ({itemCount})</div>
               <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">

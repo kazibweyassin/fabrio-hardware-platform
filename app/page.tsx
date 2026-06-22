@@ -19,44 +19,44 @@ export default async function HomePage() {
   return (
     <div className="bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[min(42vw,720px)] lg:min-h-[min(38vw,760px)]">
+      <section className="relative overflow-hidden min-h-[520px] sm:min-h-[min(42vw,720px)] lg:min-h-[min(38vw,760px)]">
         <HeroImageSlider images={heroImages} />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 pb-20">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 pb-16 sm:pb-20">
           <div className="max-w-2xl animate-slide-up">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-brand text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               Trusted by 2,400+ enterprises
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] text-balance">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] text-balance">
               Building your safety for{' '}
               <span className="text-brand">success</span>
             </h1>
             <p className="mt-6 text-lg text-white/75 leading-relaxed max-w-lg">
               Premium construction hardware, OSHA-certified PPE, and industrial equipment — with bulk pricing, fast fulfillment, and dedicated B2B support.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/products">
-                <Button size="lg" className="h-12 px-7 rounded-xl gradient-brand text-brand-foreground border-0 font-semibold shadow-lg gap-2">
+            <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+              <Link href="/products" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto h-12 px-7 rounded-xl gradient-brand text-brand-foreground border-0 font-semibold shadow-lg gap-2">
                   Browse Catalog <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <Link href="/auth/signup">
-                <Button size="lg" variant="outline" className="h-12 px-7 rounded-xl bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white font-semibold">
+              <Link href="/auth/signup" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-7 rounded-xl bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white font-semibold">
                   Open B2B Account
                 </Button>
               </Link>
             </div>
-            <div className="mt-12 grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
+            <div className="mt-10 sm:mt-12 grid grid-cols-3 gap-3 sm:gap-6 pt-6 sm:pt-8 border-t border-white/10">
               <div>
-                <p className="text-2xl lg:text-3xl font-bold text-white">12K+</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">12K+</p>
                 <p className="text-xs text-white/50 mt-1">Products in stock</p>
               </div>
               <div>
-                <p className="text-2xl lg:text-3xl font-bold text-white">48hr</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">48hr</p>
                 <p className="text-xs text-white/50 mt-1">Avg. delivery</p>
               </div>
               <div>
-                <p className="text-2xl lg:text-3xl font-bold text-white">99.2%</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">99.2%</p>
                 <p className="text-xs text-white/50 mt-1">Fill rate</p>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default async function HomePage() {
 
       {/* CTA Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 lg:pb-20">
-        <div className="gradient-hero rounded-3xl p-10 lg:p-14 relative overflow-hidden">
+        <div className="gradient-hero rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 relative overflow-hidden">
           <div className="absolute inset-0 grid-pattern opacity-40" />
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
             <div className="max-w-xl">
@@ -168,14 +168,14 @@ export default async function HomePage() {
                 Our B2B team offers volume pricing, net-30 terms, and dedicated fulfillment for enterprise accounts.
               </p>
             </div>
-            <div className="flex flex-wrap gap-3 shrink-0">
-              <Link href="/auth/signup">
-                <Button size="lg" className="h-12 px-7 rounded-xl gradient-brand text-brand-foreground border-0 font-semibold">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 shrink-0 w-full sm:w-auto">
+              <Link href="/auth/signup" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto h-12 px-7 rounded-xl gradient-brand text-brand-foreground border-0 font-semibold">
                   Create Account
                 </Button>
               </Link>
-              <Link href="/products">
-                <Button size="lg" variant="outline" className="h-12 px-7 rounded-xl bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white font-semibold">
+              <Link href="/products" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-7 rounded-xl bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white font-semibold">
                   Request Quote
                 </Button>
               </Link>

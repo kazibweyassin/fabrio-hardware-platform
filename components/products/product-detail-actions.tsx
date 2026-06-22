@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import AddToCartButton from '@/components/add-to-cart-button'
 import WishlistButton from '@/components/wishlist-button'
-import { Button } from '@/components/ui/button'
 import { Minus, Plus } from 'lucide-react'
 import { useWishlist } from '@/lib/use-wishlist'
 
@@ -26,6 +25,7 @@ export default function ProductDetailActions({ product, disabled = false }: Prod
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
       {/* Quantity Selector */}
       <div>
         <label className="block text-sm font-medium text-muted-foreground mb-2">Quantity</label>
@@ -54,13 +54,13 @@ export default function ProductDetailActions({ product, disabled = false }: Prod
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:min-w-[280px]">
         <AddToCartButton
           product={product}
           quantity={quantity}
           label={disabled ? 'Out of Stock' : 'Add to Cart'}
           disabled={disabled}
-          className="flex-1 h-12 rounded-xl gradient-brand text-brand-foreground text-base font-semibold hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 h-12 rounded-xl gradient-brand text-brand-foreground text-base font-semibold hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-0"
         />
 
         <WishlistButton
@@ -69,8 +69,9 @@ export default function ProductDetailActions({ product, disabled = false }: Prod
           isWishlisted={isWishlisted(product.id)}
           onToggle={toggle}
           size="lg"
-          className="h-12 w-12 shrink-0"
+          className="h-12 w-full sm:w-12 shrink-0"
         />
+      </div>
       </div>
 
       <p className="text-xs text-muted-foreground text-center">

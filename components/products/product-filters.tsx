@@ -73,27 +73,29 @@ function FilterFields({
         <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">
           Price Range (UGX)
         </label>
-        <div className="flex gap-2 items-center">
-          <Input
-            type="number"
-            placeholder="Min"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-            onBlur={applyPriceFilter}
-            onKeyDown={(e) => e.key === 'Enter' && applyPriceFilter()}
-            className="h-11"
-          />
-          <span className="text-muted-foreground">–</span>
-          <Input
-            type="number"
-            placeholder="Max"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-            onBlur={applyPriceFilter}
-            onKeyDown={(e) => e.key === 'Enter' && applyPriceFilter()}
-            className="h-11"
-          />
-          <Button variant="outline" size="sm" onClick={applyPriceFilter} className="h-11 px-4" disabled={isPending}>
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+          <div className="flex gap-2 items-center flex-1">
+            <Input
+              type="number"
+              placeholder="Min"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              onBlur={applyPriceFilter}
+              onKeyDown={(e) => e.key === 'Enter' && applyPriceFilter()}
+              className="h-11 flex-1 min-w-0"
+            />
+            <span className="text-muted-foreground shrink-0">–</span>
+            <Input
+              type="number"
+              placeholder="Max"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              onBlur={applyPriceFilter}
+              onKeyDown={(e) => e.key === 'Enter' && applyPriceFilter()}
+              className="h-11 flex-1 min-w-0"
+            />
+          </div>
+          <Button variant="outline" size="sm" onClick={applyPriceFilter} className="h-11 px-4 w-full sm:w-auto shrink-0" disabled={isPending}>
             Apply
           </Button>
         </div>

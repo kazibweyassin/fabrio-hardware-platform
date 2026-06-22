@@ -70,21 +70,23 @@ export default function FilterChips(props: FilterChipsProps) {
   if (chips.length === 0) return null
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-4">
-      <span className="text-xs font-medium text-muted-foreground mr-1">Active:</span>
-      {chips.map((chip) => (
-        <Link
-          key={chip.key}
-          href={chip.href}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-medium hover:bg-primary/10 transition-colors"
-        >
-          {chip.label}
-          <X className="w-3 h-3 opacity-60" />
+    <div className="-mx-4 px-4 mb-4 overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-2 w-max min-w-full flex-nowrap pb-1">
+        <span className="text-xs font-medium text-muted-foreground shrink-0">Active:</span>
+        {chips.map((chip) => (
+          <Link
+            key={chip.key}
+            href={chip.href}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-medium hover:bg-primary/10 transition-colors shrink-0 whitespace-nowrap"
+          >
+            {chip.label}
+            <X className="w-3 h-3 opacity-60" />
+          </Link>
+        ))}
+        <Link href="/products" className="text-xs font-medium text-muted-foreground hover:text-primary shrink-0 whitespace-nowrap">
+          Clear all
         </Link>
-      ))}
-      <Link href="/products" className="text-xs font-medium text-muted-foreground hover:text-primary ml-1">
-        Clear all
-      </Link>
+      </div>
     </div>
   )
 }

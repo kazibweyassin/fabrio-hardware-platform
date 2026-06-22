@@ -150,7 +150,7 @@ export default function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden pb-5 pt-2 border-t border-border/60 animate-fade-in">
+          <div className="md:hidden pb-5 pt-2 border-t border-border/60 animate-fade-in max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain">
             <form onSubmit={handleSearch} className="mb-4">
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

@@ -36,7 +36,7 @@ export default function OrderSummaryCard({
   className,
 }: OrderSummaryCardProps) {
   return (
-    <div className={cn('card-elevated p-6 sticky top-24', className)}>
+    <div className={cn('card-elevated p-5 sm:p-6 lg:sticky lg:top-24', className)}>
       <h2 className="text-lg font-semibold mb-5">Order Summary</h2>
 
       {items && items.length > 0 && (

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 export default function NewsletterForm() {
   return (
     <form
-      className="flex gap-2"
+      className="flex flex-col sm:flex-row gap-2"
       onSubmit={(e) => {
         e.preventDefault()
         const form = e.currentTarget
@@ -25,7 +25,7 @@ export default function NewsletterForm() {
       />
       <button
         type="submit"
-        className="h-11 px-5 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold shrink-0 hover:opacity-90 transition-opacity"
+        className="h-11 px-5 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold shrink-0 hover:opacity-90 transition-opacity w-full sm:w-auto"
       >
         Subscribe
       </button>

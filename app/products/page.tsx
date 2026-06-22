@@ -1,5 +1,6 @@
 import ProductGrid from '@/components/products/product-grid'
 import CategorySidebar from '@/components/layout/category-sidebar'
+import MobileCategoryRail from '@/components/layout/mobile-category-rail'
 import PageHeader from '@/components/layout/page-header'
 import ProductFilters from '@/components/products/product-filters'
 import ProductPagination from '@/components/products/product-pagination'
@@ -73,7 +74,7 @@ export default async function ProductsPage({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
         <PageHeader
           eyebrow="Product Catalog"
           title={pageTitle}
@@ -83,6 +84,12 @@ export default async function ProductsPage({
             {total} products
           </Badge>
         </PageHeader>
+
+        <MobileCategoryRail
+          categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+          activeSlug={category}
+          counts={Object.fromEntries(categories.map((c) => [c.name, c._count.products]))}
+        />
 
         <FilterChips
           search={search}
@@ -94,7 +101,7 @@ export default async function ProductsPage({
           inStock={inStock}
         />
 
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <ProductFilters
             currentSort={sort}
             currentMinPrice={minPrice}
@@ -106,8 +113,8 @@ export default async function ProductsPage({
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+          <div className="hidden lg:block lg:col-span-1">
             <CategorySidebar
               categories={categories.map((c) => ({ id: c.id, name: c.name }))}
               activeSlug={category}

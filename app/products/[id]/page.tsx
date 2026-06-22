@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <div className="bg-background min-h-screen">
       <div className="border-b border-border bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <nav className="flex items-center gap-1.5 text-sm text-muted-foreground flex-wrap">
+          <nav className="flex items-center gap-1.5 text-sm text-muted-foreground overflow-x-auto scrollbar-none whitespace-nowrap pb-0.5">
             <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <Link href="/products" className="hover:text-foreground transition-colors">Products</Link>
@@ -120,13 +120,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </>
             )}
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-foreground font-medium truncate max-w-[200px]">{product.name}</span>
+            <span className="text-foreground font-medium truncate max-w-[min(50vw,200px)] sm:max-w-[200px]">{product.name}</span>
           </nav>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-start">
           <div className="card-elevated overflow-hidden lg:sticky lg:top-24 relative">
             <ProductImage
               src={product.image}
@@ -153,10 +153,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <span className="text-muted-foreground font-mono">SKU: {product.sku}</span>
             </div>
 
-            <div className="card-elevated p-6">
+            <div className="card-elevated p-4 sm:p-6">
               {product.retailPrice > 0 ? (
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-bold text-foreground">
+                  <span className="text-3xl sm:text-4xl font-bold text-foreground">
                     {formatCurrency(product.retailPrice)}
                   </span>
                   {product.basePrice && product.retailPrice > product.basePrice && (

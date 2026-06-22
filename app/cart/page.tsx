@@ -22,7 +22,7 @@ export default function CartPage() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
           <div className="h-9 w-48 bg-muted rounded mb-3 animate-pulse" />
           <div className="h-5 w-64 bg-muted rounded mb-8 animate-pulse" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -41,7 +41,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
           <PageHeader eyebrow="Your Cart" title="Shopping Cart" description="Review items before checkout" />
           <div className="card-elevated p-16 text-center max-w-lg mx-auto">
             <ShoppingBag className="w-14 h-14 text-muted-foreground/30 mx-auto mb-5" />
@@ -65,7 +65,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
         <PageHeader
           eyebrow="Your Cart"
           title="Shopping Cart"
@@ -74,11 +74,12 @@ export default function CartPage() {
 
         <CheckoutStepper currentStep={1} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="lg:col-span-2 space-y-4 order-2 lg:order-1">
             {items.map((item) => (
-              <div key={item.productId} className="card-elevated p-5 flex gap-5">
-                <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-muted to-secondary/30 flex items-center justify-center shrink-0 overflow-hidden">
+              <div key={item.productId} className="card-elevated p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5">
+                <div className="flex gap-4 sm:block">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gradient-to-br from-muted to-secondary/30 flex items-center justify-center shrink-0 overflow-hidden">
                   {item.image ? (
                     <img
                       src={item.image}
@@ -90,11 +91,20 @@ export default function CartPage() {
                   )}
                 </div>
 
-                <div className="flex-grow min-w-0">
-                  <h3 className="font-semibold text-foreground line-clamp-2">{item.productName}</h3>
+                <div className="flex-grow min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-semibold text-foreground line-clamp-2 pr-2">{item.productName}</h3>
+                  <button
+                    onClick={() => removeItem(item.productId)}
+                    className="text-muted-foreground hover:text-destructive transition-colors shrink-0 p-1 sm:hidden touch-target"
+                    aria-label="Remove item"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                  </div>
                   <p className="text-sm text-muted-foreground mt-1">{formatCurrency(item.price)} each</p>
 
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
                     <div className="flex items-center border border-border rounded-xl overflow-hidden">
                       <button
                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
@@ -116,10 +126,11 @@ export default function CartPage() {
                     <p className="font-bold text-lg">{formatCurrency(item.price * item.quantity)}</p>
                   </div>
                 </div>
+                </div>
 
                 <button
                   onClick={() => removeItem(item.productId)}
-                  className="text-muted-foreground hover:text-destructive transition-colors shrink-0 self-start p-1"
+                  className="hidden sm:block text-muted-foreground hover:text-destructive transition-colors shrink-0 self-start p-1 touch-target"
                   aria-label="Remove item"
                 >
                   <Trash2 className="w-5 h-5" />
@@ -135,7 +146,7 @@ export default function CartPage() {
             </button>
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-1 lg:order-2">
             <OrderSummaryCard
               subtotal={totals.subtotal}
               shipping={totals.shipping}

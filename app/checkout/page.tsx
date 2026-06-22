@@ -122,7 +122,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
         <PageHeader
           eyebrow="Checkout"
           title="Complete Your Order"
@@ -131,8 +131,8 @@ export default function CheckoutPage() {
 
         <CheckoutStepper currentStep={orderId ? 3 : 2} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
             {!orderId ? (
               <form onSubmit={handleCreateOrder} className="space-y-6">
                 <div className="card-elevated p-6 lg:p-8">
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
                       <label className="block text-sm font-medium mb-2">Street Address</label>
                       <Input type="text" name="address" value={formData.address} onChange={handleChange} required />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2">City / Town</label>
                         <Input type="text" name="city" value={formData.city} onChange={handleChange} required />
@@ -191,7 +191,12 @@ export default function CheckoutPage() {
                   disabled={loading}
                   className="w-full h-12 rounded-xl gradient-brand text-brand-foreground border-0 font-semibold shadow-sm"
                 >
-                  {loading ? 'Creating order...' : 'Place Order & Pay with Mobile Money'}
+                  {loading ? 'Creating order...' : (
+                    <>
+                      <span className="sm:hidden">Place Order & Pay</span>
+                      <span className="hidden sm:inline">Place Order & Pay with Mobile Money</span>
+                    </>
+                  )}
                 </Button>
               </form>
             ) : (
@@ -220,7 +225,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-1 lg:order-2">
             <OrderSummaryCard
               items={orderId ? [] : items}
               subtotal={orderId ? orderTotal - totals.tax - totals.shipping : totals.subtotal}

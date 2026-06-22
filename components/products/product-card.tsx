@@ -63,7 +63,7 @@ export default function ProductCard({
         </div>
       </div>
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {product.category && (
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             {product.category.name}
@@ -99,15 +99,15 @@ export default function ProductCard({
             className="w-full h-10 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm"
           />
         ) : (
-          <div className="flex gap-2">
-            <Link href={`/products/${product.id}`} className="flex-1">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Link href={`/products/${product.id}`} className="flex-1 min-w-0">
               <Button variant="outline" className="w-full h-10 rounded-xl font-medium">
                 Details
               </Button>
             </Link>
             <AddToCartButton
               product={product}
-              className="flex-1 w-full h-10 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm"
+              className="flex-1 w-full h-10 rounded-xl gradient-brand text-brand-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm min-w-0"
             />
           </div>
         )}
