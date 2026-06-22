@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./db";
-import { getAppUrl, getAuthSecret } from "./env";
+import { getAppUrl, getAuthSecret, getTrustedOrigins } from "./env";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -49,7 +49,7 @@ export const auth = betterAuth({
     },
   },
   baseURL: getAppUrl(),
-  trustedOrigins: [getAppUrl()],
+  trustedOrigins: getTrustedOrigins(),
   appName: "Fabrio Hardware",
   secret: getAuthSecret(),
 });

@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { mapMtnStatusToPaymentStatus } from '@/lib/mtn-momo'
 import { applyPaymentStatus } from '@/lib/payment-updates'
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
-import { getMtnMomoWebhookSecret } from '@/lib/env'
+import { getMtnMomoWebhookSecret, isMtnMomoApiEnabled } from '@/lib/env'
 
 export async function POST(req: Request) {
   const rateLimited = checkRateLimit(req, 'api:webhooks:mtn-momo', RATE_LIMITS.webhooks.limit, RATE_LIMITS.webhooks.windowMs)
@@ -10,6 +10,13 @@ export async function POST(req: Request) {
 
   try {
     const webhookSecret = getMtnMomoWebhookSecret()
+    const requireSecret =
+      process.env.NODE_ENV === 'production' || isMtnMomoApiEnabled()
+
+    if (requireSecret && !webhookSecret) {
+      return Response.json({ error: 'Webhook secret is not configured' }, { status: 503 })
+    }
+
     if (webhookSecret) {
       const providedSecret = req.headers.get('x-webhook-secret')
       if (providedSecret !== webhookSecret) {

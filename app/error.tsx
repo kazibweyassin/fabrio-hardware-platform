@@ -22,7 +22,9 @@ export default function Error({
         <AlertTriangle className="w-16 h-16 text-destructive mx-auto mb-4" />
         <h1 className="text-4xl font-bold mb-2">Something went wrong</h1>
         <p className="text-muted-foreground mb-6">
-          {error.message || 'An unexpected error occurred. Please try again.'}
+          {process.env.NODE_ENV === 'development'
+            ? error.message || 'An unexpected error occurred. Please try again.'
+            : 'An unexpected error occurred. Please try again.'}
         </p>
         <div className="flex gap-4 justify-center">
           <button
