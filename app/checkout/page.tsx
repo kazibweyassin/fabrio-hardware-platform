@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import MobileMoneyPaymentForm from '@/components/checkout/mobile-money-payment-form'
 import { calculateOrderTotals } from '@/lib/pricing'
 import PageHeader from '@/components/layout/page-header'
+import CheckoutSkeleton from '@/components/skeletons/checkout-skeleton'
 import CheckoutStepper from '@/components/checkout/checkout-stepper'
 import OrderSummaryCard from '@/components/layout/order-summary-card'
 import { Input } from '@/components/ui/input'
@@ -46,11 +47,7 @@ export default function CheckoutPage() {
   }, [session, isPending, router])
 
   if (isPending) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted-foreground text-sm">Loading checkout...</div>
-      </div>
-    )
+    return <CheckoutSkeleton />
   }
   if (!session?.user) return null
 

@@ -24,7 +24,7 @@ export default function TrustBar() {
   const marqueeBrands = [...partnerBrands, ...partnerBrands]
 
   return (
-    <section className="border-y border-border bg-surface overflow-hidden">
+    <section className="section-surface overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-center gap-2 mb-6">
           <Handshake className="w-4 h-4 text-primary" aria-hidden />

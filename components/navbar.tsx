@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { ShoppingCart, Menu, X, Search, User, ChevronDown, Heart } from 'lucide-react'
 import Image from 'next/image'
 import MiniCart from '@/components/cart/mini-cart'
+import ThemeToggle from '@/components/layout/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -137,11 +138,13 @@ export default function Navbar() {
               </Link>
             )}
 
+            <ThemeToggle className="hidden sm:flex" />
+
             <MiniCart />
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden flex items-center justify-center w-11 h-11 rounded-xl border border-border bg-surface"
+              className="md:hidden flex items-center justify-center w-11 h-11 rounded-xl border border-border bg-surface focus-ring"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

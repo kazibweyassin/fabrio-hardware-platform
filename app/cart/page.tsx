@@ -2,7 +2,8 @@
 
 import { useCart } from '@/lib/store/cart'
 import Link from 'next/link'
-import { Minus, Package, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import ProductThumbnail from '@/components/products/product-thumbnail'
 import { formatCurrency } from '@/lib/format'
 import { calculateOrderTotals } from '@/lib/pricing'
 import { useEffect, useState } from 'react'
@@ -79,17 +80,7 @@ export default function CartPage() {
             {items.map((item) => (
               <div key={item.productId} className="card-elevated p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5">
                 <div className="flex gap-4 sm:block">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gradient-to-br from-muted to-secondary/30 flex items-center justify-center shrink-0 overflow-hidden">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.productName}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Package className="w-8 h-8 text-muted-foreground/30" />
-                  )}
-                </div>
+                <ProductThumbnail src={item.image} alt={item.productName} size="md" />
 
                 <div className="flex-grow min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">

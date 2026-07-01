@@ -3,6 +3,7 @@
 import { useCart } from '@/lib/store/cart'
 import Link from 'next/link'
 import { ShoppingCart, X, Plus, Minus } from 'lucide-react'
+import ProductThumbnail from '@/components/products/product-thumbnail'
 import { formatCurrency } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
@@ -62,15 +63,7 @@ export default function MiniCart() {
             <div className="max-h-80 overflow-auto p-2 space-y-2">
               {items.map((item) => (
                 <div key={item.productId} className="flex gap-3 p-2 rounded-lg hover:bg-surface">
-                  <div className="w-14 h-14 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
-                    {item.image ? (
-                      <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
-                        <ShoppingCart className="w-5 h-5" />
-                      </div>
-                    )}
-                  </div>
+                  <ProductThumbnail src={item.image} alt={item.productName} size="sm" />
                   <div className="flex-1 min-w-0 text-sm">
                     <div className="font-medium line-clamp-2 pr-6">{item.productName}</div>
                     <div className="text-muted-foreground mt-0.5">{formatCurrency(item.price)} × {item.quantity}</div>

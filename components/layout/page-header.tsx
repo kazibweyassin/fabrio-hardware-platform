@@ -23,7 +23,7 @@ export default function PageHeader({
         <p
           className={cn(
             'text-xs font-semibold uppercase tracking-widest mb-3',
-            dark ? 'text-brand' : 'text-accent'
+            dark ? 'text-brand-on-dark' : 'text-accent'
           )}
         >
           {eyebrow}

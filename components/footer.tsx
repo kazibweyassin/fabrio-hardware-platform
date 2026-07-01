@@ -19,8 +19,9 @@ const companyLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+    <footer className="gradient-footer text-primary-foreground relative overflow-hidden">
+      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" aria-hidden />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
           <div className="lg:col-span-4">
             <div className="flex items-center gap-3 mb-5">
@@ -35,15 +36,15 @@ export default function Footer() {
             </p>
             <div className="space-y-2.5 text-sm text-white/60">
               <p className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-brand shrink-0" />
+                <MapPin className="w-4 h-4 text-brand-on-dark shrink-0" aria-hidden />
                  Industrial Area Bweyogerere, Uganda
               </p>
               <p className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-brand shrink-0" />
+                <Phone className="w-4 h-4 text-brand-on-dark shrink-0" aria-hidden />
                 +256 700 123 456
               </p>
               <p className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-brand shrink-0" />
+                <Mail className="w-4 h-4 text-brand-on-dark shrink-0" aria-hidden />
                 support@fabrio.com
               </p>
             </div>
@@ -54,7 +55,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {productLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/60 hover:text-brand transition-colors">
+                  <Link href={link.href} className="text-sm text-white/60 hover:text-brand-on-dark transition-colors focus-ring rounded-sm">
                     {link.label}
                   </Link>
                 </li>
@@ -67,7 +68,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {companyLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/60 hover:text-brand transition-colors">
+                  <Link href={link.href} className="text-sm text-white/60 hover:text-brand-on-dark transition-colors focus-ring rounded-sm">
                     {link.label}
                   </Link>
                 </li>

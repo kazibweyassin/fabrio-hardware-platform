@@ -142,7 +142,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            <ThemeToggle variant="sidebar" />
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wider">
               Admin
             </div>

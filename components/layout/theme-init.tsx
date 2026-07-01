@@ -5,9 +5,11 @@ import { useEffect } from 'react'
 export default function ThemeInit() {
   useEffect(() => {
     const stored = localStorage.getItem('fabrio-theme')
-    if (stored === 'dark') {
-      document.documentElement.classList.add('dark')
-    }
+    const prefersDark =
+      stored === 'dark' ||
+      (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+
+    document.documentElement.classList.toggle('dark', prefersDark)
   }, [])
 
   return null

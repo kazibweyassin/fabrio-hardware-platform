@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, ChevronRight, Sparkles, Timer, Zap } from 'lucide-react'
+import { ArrowRight, Sparkles, Timer, Zap } from 'lucide-react'
 import JsonLd from '@/components/seo/json-ld'
 import {
   buildItemListJsonLd,
@@ -11,6 +11,9 @@ import {
 import CategoryIcon from '@/components/home/category-icon'
 import HomeProductCard from '@/components/home/product-card'
 import HeroImageSlider from '@/components/home/hero-image-slider'
+import B2BValueStrip from '@/components/layout/b2b-value-strip'
+import RevealOnScroll from '@/components/layout/reveal-on-scroll'
+import SectionHeader from '@/components/layout/section-header'
 import TrustBar from '@/components/layout/trust-bar'
 import { Button } from '@/components/ui/button'
 import { getHeroImages } from '@/lib/hero-images'
@@ -49,13 +52,13 @@ export default async function HomePage() {
         <HeroImageSlider images={heroImages} />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 pb-16 sm:pb-20">
           <div className="max-w-2xl animate-slide-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-brand text-xs font-semibold uppercase tracking-wider mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-brand-on-dark text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               Trusted by 2,400+ enterprises
             </div>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] text-balance">
               Building your safety for{' '}
-              <span className="text-brand">success</span>
+              <span className="text-brand-on-dark">success</span>
             </h1>
             <p className="mt-6 text-lg text-white/75 leading-relaxed max-w-lg">
               Premium construction hardware, OSHA-certified PPE, and industrial equipment — with bulk pricing, fast fulfillment, and dedicated B2B support.
@@ -73,18 +76,16 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="mt-10 sm:mt-12 grid grid-cols-3 gap-3 sm:gap-6 pt-6 sm:pt-8 border-t border-white/10">
-              <div>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">12K+</p>
-                <p className="text-xs text-white/50 mt-1">Products in stock</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">48hr</p>
-                <p className="text-xs text-white/50 mt-1">Avg. delivery</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">99.2%</p>
-                <p className="text-xs text-white/50 mt-1">Fill rate</p>
-              </div>
+              {[
+                { value: '12K+', label: 'Products in stock' },
+                { value: '48hr', label: 'Avg. delivery' },
+                { value: '99.2%', label: 'Fill rate' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center sm:text-left">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tabular-nums">{stat.value}</p>
+                  <p className="text-xs text-white/50 mt-1">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -92,24 +93,25 @@ export default async function HomePage() {
 
       <TrustBar />
 
+      <RevealOnScroll>
+        <B2BValueStrip />
+      </RevealOnScroll>
+
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-2">Shop by Category</p>
-            <h2 className="text-3xl font-bold">Find what your team needs</h2>
-          </div>
-          <Link href="/products" className="hidden sm:flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
-            View all <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
+        <RevealOnScroll delay={80}>
+        <SectionHeader
+          eyebrow="Shop by Category"
+          title="Find what your team needs"
+          action={{ href: '/products', label: 'View all' }}
+        />
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/products?category=${cat.name.toLowerCase().replace(/ /g, '-')}`}
-              className="group card-interactive p-5 text-center hover:-translate-y-1"
+              className="group card-interactive p-5 text-center hover:-translate-y-1 hover:border-brand/20"
             >
               <CategoryIcon name={cat.name} />
               <p className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2">
@@ -119,26 +121,21 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+        </RevealOnScroll>
       </section>
 
       {/* Flash Sales */}
       {flashSaleProducts.length > 0 && (
-        <section className="bg-surface border-y border-border py-16 lg:py-20">
+        <section className="section-surface py-16 lg:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/15 text-accent">
-                  <Timer className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Flash Sales</h2>
-                  <p className="text-sm text-muted-foreground">Limited-time bulk pricing</p>
-                </div>
-              </div>
-              <Link href="/products" className="text-sm font-semibold text-primary hover:underline">
-                See all deals →
-              </Link>
-            </div>
+            <RevealOnScroll delay={120}>
+            <SectionHeader
+              title="Flash Sales"
+              description="Limited-time bulk pricing"
+              icon={Timer}
+              iconVariant="accent"
+              action={{ href: '/products', label: 'See all deals' }}
+            />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {flashSaleProducts.map((product) => (
                 <HomeProductCard
@@ -150,26 +147,20 @@ export default async function HomePage() {
                 />
               ))}
             </div>
+            </RevealOnScroll>
           </div>
         </section>
       )}
 
       {/* Featured Products */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-primary">
-              <Zap className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">Featured Products</h2>
-              <p className="text-sm text-muted-foreground">Top picks from our catalog</p>
-            </div>
-          </div>
-          <Link href="/products" className="text-sm font-semibold text-primary hover:underline">
-            View catalog →
-          </Link>
-        </div>
+        <RevealOnScroll delay={160}>
+        <SectionHeader
+          title="Featured Products"
+          description="Top picks from our catalog"
+          icon={Zap}
+          action={{ href: '/products', label: 'View catalog' }}
+        />
         {featuredProducts.length === 0 ? (
           <p className="text-muted-foreground text-center py-12">No products available yet.</p>
         ) : (
@@ -179,10 +170,12 @@ export default async function HomePage() {
             ))}
           </div>
         )}
+        </RevealOnScroll>
       </section>
 
       {/* CTA Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 lg:pb-20">
+        <RevealOnScroll delay={200}>
         <div className="gradient-hero rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 relative overflow-hidden">
           <div className="absolute inset-0 grid-pattern opacity-40" />
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
@@ -208,6 +201,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+        </RevealOnScroll>
       </section>
     </div>
   )

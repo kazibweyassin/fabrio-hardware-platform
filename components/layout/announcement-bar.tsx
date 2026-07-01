@@ -4,11 +4,11 @@ import { formatCurrency } from '@/lib/format'
 
 export default function AnnouncementBar() {
   return (
-    <div className="bg-primary text-primary-foreground text-xs sm:text-sm">
+    <div className="gradient-announcement text-primary-foreground text-xs sm:text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-9 gap-4 overflow-hidden">
           <div className="flex items-center gap-6 min-w-0">
-            <span className="hidden sm:flex items-center gap-1.5 shrink-0 font-medium text-brand">
+            <span className="hidden sm:flex items-center gap-1.5 shrink-0 font-medium text-brand-on-dark">
               <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
               Enterprise B2B Platform
             </span>

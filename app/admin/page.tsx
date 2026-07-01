@@ -65,10 +65,10 @@ export default async function AdminDashboard() {
   const [stats, recentOrders] = await Promise.all([getDashboardStats(), getRecentOrders()])
 
   const statCards = [
-    { label: 'Total Products', value: stats.totalProducts.toLocaleString(), icon: Package },
-    { label: 'Total Orders', value: stats.totalOrders.toLocaleString(), icon: ShoppingCart },
-    { label: 'Total Customers', value: stats.totalCustomers.toLocaleString(), icon: BarChart3 },
-    { label: 'Revenue', value: formatCurrency(stats.totalRevenue), icon: DollarSign },
+    { label: 'Total Products', value: stats.totalProducts.toLocaleString(), icon: Package, accent: 'bg-primary/5 text-primary' },
+    { label: 'Total Orders', value: stats.totalOrders.toLocaleString(), icon: ShoppingCart, accent: 'bg-accent/10 text-accent-foreground' },
+    { label: 'Total Customers', value: stats.totalCustomers.toLocaleString(), icon: BarChart3, accent: 'bg-info text-info-foreground' },
+    { label: 'Revenue', value: formatCurrency(stats.totalRevenue), icon: DollarSign, accent: 'bg-success text-success-foreground' },
   ]
 
   return (
@@ -83,14 +83,14 @@ export default async function AdminDashboard() {
         {statCards.map((stat) => {
           const Icon = stat.icon
           return (
-            <div key={stat.label} className="card-elevated p-6">
-              <div className="flex items-start justify-between">
+            <div key={stat.label} className="card-interactive p-6 hover:border-primary/15">
+              <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
+                  <p className="text-2xl font-bold tracking-tight tabular-nums">{stat.value}</p>
                 </div>
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-primary">
-                  <Icon className="w-5 h-5" />
+                <div className={`flex items-center justify-center w-10 h-10 rounded-xl shrink-0 ${stat.accent}`}>
+                  <Icon className="w-5 h-5" aria-hidden />
                 </div>
               </div>
             </div>

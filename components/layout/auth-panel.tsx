@@ -29,7 +29,7 @@ export default function AuthPanel() {
         </Link>
 
         <div className="max-w-md">
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-4">Enterprise B2B Platform</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand-on-dark mb-4">Enterprise B2B Platform</p>
           <h2 className="text-3xl xl:text-4xl font-bold text-white leading-tight text-balance">
             Industrial-grade hardware for teams that build the future
           </h2>
@@ -42,7 +42,7 @@ export default function AuthPanel() {
               const Icon = item.icon
               return (
                 <li key={item.text} className="flex items-center gap-3 text-sm text-white/80">
-                  <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 text-brand shrink-0">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 text-brand-on-dark shrink-0">
                     <Icon className="w-4 h-4" />
                   </div>
                   {item.text}

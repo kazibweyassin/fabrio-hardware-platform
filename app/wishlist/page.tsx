@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/lib/auth-client'
-import { Package, Heart, ShoppingCart, Trash2 } from 'lucide-react'
+import { Heart, ShoppingCart, Trash2 } from 'lucide-react'
+import ProductImage from '@/components/products/product-image'
 import { formatCurrency } from '@/lib/format'
 import { useCart } from '@/lib/store/cart'
 import { Button } from '@/components/ui/button'
@@ -133,19 +134,8 @@ export default function WishlistPage() {
 
               return (
                 <article key={product.id} className="group card-elevated overflow-hidden flex flex-col">
-                  <Link href={`/products/${product.id}`} className="block">
-                    <div className="relative aspect-[4/3] bg-gradient-to-br from-muted to-secondary/30 overflow-hidden">
-                      {product.image ? (
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Package className="w-12 h-12 text-muted-foreground/30" />
-                        </div>
-                      )}
+                  <Link href={`/products/${product.id}`} className="block relative">
+                    <ProductImage src={product.image} alt={product.name} aspectClass="aspect-[4/3]" />
                       {discountPercent > 0 && (
                         <div className="absolute top-3 left-3">
                           <span className="inline-flex items-center rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground shadow-sm">
@@ -153,7 +143,6 @@ export default function WishlistPage() {
                           </span>
                         </div>
                       )}
-                    </div>
                   </Link>
 
                   <div className="p-5 flex flex-col flex-1">

@@ -34,8 +34,8 @@ export default function ProductImage({
         />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center">
-          <Package className="w-10 h-10 text-muted-foreground/30" />
-          <p className="text-xs text-muted-foreground">Image coming soon</p>
+          <Package className="w-10 h-10 text-muted-foreground/35" aria-hidden />
+          <p className="text-xs text-muted-foreground/80">Image coming soon</p>
         </div>
       )}
     </div>
